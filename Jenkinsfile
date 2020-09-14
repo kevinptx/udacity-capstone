@@ -11,11 +11,6 @@ pipeline {
         sh 'tidy -q -e index.html'
       }
     }
-    stage('Lint the Dockerfile') {
-      steps {
-        sh 'hadolint Dockerfile'
-      }
-    }
     stage('Build the Docker image') {
       steps {
          sh 'docker build -t capstone-final .'
