@@ -13,14 +13,14 @@ pipeline {
     }
     stage('Build the Docker image') {
       steps {
-         sh 'docker build -t capstone-final .'
+         sh 'docker build -t capstone .'
       }
     }
     stage('Push docker image'){
       steps {
         withDockerRegistry([url: '', credentialsId: 'docker']) {
-          sh 'docker tag capstone-final kpeery/capstone-final'
-          sh 'docker push kpeery/capstone-final'
+          sh 'docker tag capstone kpeery/capstone'
+          sh 'docker push kpeery/capstone'
         }
       }
     }
@@ -29,9 +29,9 @@ pipeline {
         sh 'echo creating EKS cluster'
         withAWS(credentials: 'aws', region: 'us-east-2') {
         sh '''eksctl create cluster \
-            --name capstone-final \
+            --name capstone \
             --region us-east-2 \
-            --nodegroup-name capstone-final-nodes \
+            --nodegroup-name capstone \
             --nodes 3 \
             --nodes-min 1 \
             --nodes-max 4 \
@@ -42,7 +42,7 @@ pipeline {
     stage('Create configuration file') {
       steps {
         withAWS(credentials: 'aws', region: 'us-east-2') {
-        sh 'aws eks --region us-east-2 update-kubeconfig --name capstone-final'
+        sh 'aws eks --region us-east-2 update-kubeconfig --name capstone'
         } 
       }
     }
@@ -59,7 +59,7 @@ pipeline {
         sh 'kubectl get nodes'
         sh 'kubectl get deployment'
         sh 'kubectl get pod -o wide'
-        sh 'kubectl get service/capstone-final'
+        sh 'kubectl get service/capstone'
         } 
       }
     }
